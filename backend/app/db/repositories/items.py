@@ -211,11 +211,12 @@ class ItemsRepository(BaseRepository):  # noqa: WPS214
             # fmt: on
 
         if title:
-            query_params.append(title)
+            like_pattern = f'%{title}%'  # Prepare the LIKE pattern with wildcards
+            query_params.append(like_pattern)  # Append the complete pattern to parameters
             query_params_count += 1
 
             # fmt: off
-            query = query.where(Field("title").like("%" + Parameter(query_params_count) + "%"))
+            query = query.where(items.title.like(Parameter(query_params_count)))
 
             # fmt: on
         query = query.limit(Parameter(query_params_count + 1)).offset(
