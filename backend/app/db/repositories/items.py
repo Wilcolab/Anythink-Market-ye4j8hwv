@@ -116,6 +116,7 @@ class ItemsRepository(BaseRepository):  # noqa: WPS214
         tag: Optional[str] = None,
         seller: Optional[str] = None,
         favorited: Optional[str] = None,
+        title: Optional[str] = None,
         limit: int = 20,
         offset: int = 0,
         requested_user: Optional[User] = None,
@@ -209,6 +210,15 @@ class ItemsRepository(BaseRepository):  # noqa: WPS214
             )
             # fmt: on
 
+        if title:
+            like_pattern = f'%{title}%'  # Prepare the LIKE pattern with wildcards
+            query_params.append(like_pattern)  # Append the complete pattern to parameters
+            query_params_count += 1
+
+            # fmt: off
+            query = query.where(items.title.like(Parameter(query_params_count)))
+
+            # fmt: on
         query = query.limit(Parameter(query_params_count + 1)).offset(
             Parameter(query_params_count + 2),
         )
